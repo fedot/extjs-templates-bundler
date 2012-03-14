@@ -17,7 +17,7 @@ Install
 Usage
 -----
 
-Use `sencha-touch-templates-bundler` in your Node application/script (bundler.js for example):
+Use `sencha-touch-templates-bundler` in your Node.js application/script (bundler.js for example):
 
 ```javascript
 var bundler = require('sencha-touch-templates-bundler');
