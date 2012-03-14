@@ -19,17 +19,19 @@ Usage
 
 Use `sencha-touch-templates-bundler` in your Node application/script (bundler.js for example):
 
-    var bundler = require('sencha-touch-templates-bundler');
-    
-    var bundlerOptions = {
-      bundle:{
-        className:'MyApp.Templates',
-        fileName: __dirname+'/public/app/Templates.js'
-      },
-      templatesPath: __dirname+'/public/app/templates'
-    };
-    
-    bundler.watch(bundlerOptions);
+```javascript
+var bundler = require('sencha-touch-templates-bundler');
+
+var bundlerOptions = {
+  bundle:{
+    className:'MyApp.Templates',
+    fileName: __dirname+'/public/app/Templates.js'
+  },
+  templatesPath: __dirname+'/public/app/templates'
+};
+
+bundler.watch(bundlerOptions);
+```
 
 Run it:
 
@@ -37,19 +39,52 @@ Run it:
 
 In your app.js, add `MyApp.Templates` to requirements:
 
-    Ext.Loader.setConfig({
-      enabled:true,
-      paths: {'MyApp':'app'}
-    });
+```javascript
+Ext.Loader.setConfig({
+  enabled:true,
+  paths: {'MyApp':'app'}
+});
 
-    Ext.application({
-      name: 'MyApp',
-      requires: ['MyApp.Templates'],
-      launch: function() {
-        // ...
-      }
-    });
-    
+Ext.application({
+  name: 'MyApp',
+  requires: ['MyApp.Templates'],
+  launch: function() {
+    // ...
+  }
+});
+```
+
 Refer to templates like this:
 
 `MyApp.Templates.templateName` or `MyApp.Templates['template-name']` (according to naming scheme).
+
+Options
+-------
+
+```javascript
+{
+  // Name of the class for templates bundle, filename will be named according to Sencha Naming convention
+  'bundle': 'MyApp.Templates',
+
+  // You may also specify name of class and filename manually if default naming isn't works for you
+  'bundle': {className: 'MyApp.Templates', 'fileName', __dirname + '/MyApp/Templates.js'},
+
+  // Regex for matching templates files names (`/\.html$/` - default)
+  'templatesFilesPattern': /\.html$/,
+
+  // Path where the templates files are located,
+  // files matched `templatesFilesPattern` will be considered templates to be bundled
+  'templatesPath': __dirname+'/templates',
+
+  // naming scheme for templates, may be one of:
+  //   "camelCase" (default)
+  //   "dashed"
+  //   function(templateFileName, templatesFilesPattern){ return templateName; }
+  'templateNamingScheme': function(templateFileName, templatesFilesPattern){
+  // This is the same as default naming scheme `camelCase`
+   return templateFile.replace(templatesFilesPattern,'')
+          .replace(/([ -]\w)/ig, function(v){
+              return v[1].toUpperCase()
+          });
+ }
+```
