@@ -11,7 +11,7 @@ People who tired of writing your complex templates withing Controllers/Views/Com
 Install
 -------
 
-    npm install git@github.com:fedot/sencha-touch-templates-bundler.git
+    npm install git://github.com/fedot/sencha-touch-templates-bundler.git
 
 Usage
 -----
