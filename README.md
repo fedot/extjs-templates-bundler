@@ -63,7 +63,8 @@ Options
 
 ```javascript
 {
-  // Name of the class for templates bundle, filename will be named according to Sencha Naming convention
+  // Name of the class for templates bundle
+  // If the bundle is string, templates bundle file will be named according to Sencha Naming convention
   'bundle': 'MyApp.Templates',
 
   // You may also specify name of class and filename manually if default naming isn't works for you
