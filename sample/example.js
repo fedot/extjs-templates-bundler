@@ -1,4 +1,4 @@
-var bundler = require('../index.js');
+var bundler = require('sencha-touch-templates-bundler');
 
 bundler.watch({
   bundle:{
