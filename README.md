@@ -58,6 +58,19 @@ Refer to templates like this:
 
 `MyApp.Templates.templateName` or `MyApp.Templates['template-name']` (according to naming scheme).
 
+```javascript
+var panel = Ext.create('Ext.Panel', {
+  // ...
+  tpl: MyApp.Templates.templateName
+});
+panel.setData({some:'data'});
+
+var list = Ext.create('Ext.List', {
+  // ...
+  itemTpl: MyApp.Templates['template-name']
+});
+```
+
 Options
 -------
 
