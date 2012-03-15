@@ -7,7 +7,7 @@ Who should use it
 -----------------
 
 People who tired of writing your complex templates withing Controllers/Views/Components (JavaScript files).  
-Those interested in using sencha-sdk-tools for application packaging and combining Templates within 
+Those interested in using sencha-sdk-tools for application packaging and combining Templates with application code for deployment.
 
 Install
 -------
