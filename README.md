@@ -1,26 +1,29 @@
-Sencha Touch templates bundler
+Ext.js Templates Bundler
 ==============================
 
-Bundle your templates for using within Sencha Touch application with ease.
+Bundle your templates to single JavaScript file for Ext JS and Sencha Touch applications.
 
 Who should use it
 -----------------
 
-People who tired of writing your complex templates withing Controllers/Views/Components (JavaScript files).  
-Those interested in using sencha-sdk-tools for application packaging and combining Templates with application code for deployment.
+People who tired of writing your complex templates within Controllers/Views/Components (JavaScript files)
+and interested keeping templates in separate files and using Template bundle in Ext JS / Sencha Touch Applications as regular class.
+
+Template Bundle is just a regular Ext Class created with `Ext.define` and templates as `statics`
+so Sencha SDK Tools may be used in a regular way to package your app including templates...
 
 Install
 -------
 
-    npm install git://github.com/fedot/sencha-touch-templates-bundler.git
+    npm install git://github.com/fedot/extjs-templates-bundler.git
 
 Bundler Usage
 -------------
 
-Use `sencha-touch-templates-bundler` in your Node.js application/script (bundler.js for example):
+Use `extjs-templates-bundler` in your Node.js application/script (bundler.js for example):
 
 ```javascript
-var bundler = require('sencha-touch-templates-bundler');
+var bundler = require('extjs-templates-bundler');
 
 var bundlerOptions = {
   bundle:{

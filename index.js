@@ -1,13 +1,13 @@
 var fs = require('fs');
 
 exports.watch = function(options){
-  return new senchaTouchTemplatesBundler(options);
+  return new TemplatesBundler(options);
 }
 
 /**
  * @params {object} options - Configuration options for template bundler
  *
- * @config {string} bundle - Name of the class for templates bundle, bundle file will be named according to Sencha Class Naming convention
+ * @config {string} bundle - Name of the class for templates bundle, bundle file will be named according to Ext Class Naming convention
  * @config {object} bundle - Specify name of class and filename manually if default naming isn't works for you
  * @example bundle: {className: 'MyApp.Templates', 'fileName', 'MyApp/Templates.js'}
  *
@@ -22,7 +22,7 @@ exports.watch = function(options){
  *
  * @config {boolean} bundleOnRun - indicates whenever templates should be bundled on run (default `true`)
  */
-var senchaTouchTemplatesBundler = function(options){
+var TemplatesBundler = function(options){
   this.settings = this.bundleSettings(options || {});
 
   // Initial bundling
@@ -44,7 +44,7 @@ var dashedNamingScheme = function(templateFile, templatesFilesPattern){
   return templateFile.replace(templatesFilesPattern,'').replace(/([\s]+\w)/ig, '-');
 }
 
-senchaTouchTemplatesBundler.prototype.bundleSettings = function(options){
+TemplatesBundler.prototype.bundleSettings = function(options){
   var settings = {
     templatesPath: options.templatesPath || process.cwd() + '/templates',
     templatesFilesPattern: options.templatesFilesPattern || /\.html$/,
@@ -77,7 +77,7 @@ senchaTouchTemplatesBundler.prototype.bundleSettings = function(options){
   return settings;
 }
 
-senchaTouchTemplatesBundler.prototype.templateReader = function(templateFile, idx, templatesList){
+TemplatesBundler.prototype.templateReader = function(templateFile, idx, templatesList){
   var tpl = {},
       templateName = this.settings.templatesNamingScheme(templateFile, this.settings.templatesFilesPattern);
 
@@ -86,7 +86,7 @@ senchaTouchTemplatesBundler.prototype.templateReader = function(templateFile, id
   return tpl;
 }
 
-senchaTouchTemplatesBundler.prototype.templatesBundler = function(templates){
+TemplatesBundler.prototype.templatesBundler = function(templates){
   var templatesBundleTemplate = '\
 /**\n\
  * THIS IS GENERATED FILE, DO NOT EDIT!!! \n\
@@ -100,7 +100,7 @@ Ext.define("'+this.settings.bundle.className+'", {statics:'
   this.updateTimer = 0;
 }
 
-senchaTouchTemplatesBundler.prototype.directoryListener = function(event, filename){
+TemplatesBundler.prototype.directoryListener = function(event, filename){
   var files = fs.readdirSync(this.settings.templatesPath);
   var templatesNamesList = files.filter(this.settings.templatesFilesPattern.test, this.settings.templatesFilesPattern);
   var templatesList = templatesNamesList.map(this.templateReader.bind(this));
@@ -112,7 +112,7 @@ senchaTouchTemplatesBundler.prototype.directoryListener = function(event, filena
   this.templatesBundler(templates);
 }
 
-senchaTouchTemplatesBundler.prototype.directoryWatchHandle = function(event, filename){
+TemplatesBundler.prototype.directoryWatchHandle = function(event, filename){
   if (this.updateTimer){
     clearTimeout(this.updateTimer);
   }
