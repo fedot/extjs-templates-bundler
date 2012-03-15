@@ -1,27 +1,38 @@
 var fs = require('fs');
 
+exports.watch = function(options){
+  return new senchaTouchTemplatesBundler(options);
+}
+
 /**
- * @params Object options - configuration options for template bundler
- * @example {
- *   // Name of the class for templates bundle, filename will be named according to Sencha Naming convention
- *   'bundle': 'MyApp.Templates',
+ * @params {object} options - Configuration options for template bundler
  *
- *   // You may specify name of class and filename manually if default naming isn't works for you
- *   'bundle': {className: 'MyApp.Templates', 'fileName', __dirname + '/MyApp/Templates.js'},
+ * @config {string} bundle - Name of the class for templates bundle, bundle file will be named according to Sencha Class Naming convention
+ * @config {object} bundle - Specify name of class and filename manually if default naming isn't works for you
+ * @example bundle: {className: 'MyApp.Templates', 'fileName', 'MyApp/Templates.js'}
  *
- *   // Regex for matching templates files names (`/\.html$/` - default)
- *   'templatesFilesPattern': /\.html$/,
+ * @config {regex} templatesFilesPattern - Regex for matching templates files names (`/\.html$/` - default)
+ * @example templatesFilesPattern: /\.html$/
  *
- *   // Path where the templates files are located, all `html` files in that path will be considered templates to be bundled (default to `__dirname + ''`
- *   'templatesPath': __dirname+'/templates',
+ * @config {string} templatesPath - Path where the templates files are located
  *
- *   // naming scheme for templates, may be one of: `camelCase` (default), `dashed`, function(templateFileName){return templateName}
- *   'templateNamingScheme': function(templateFileName, templatesFilesPattern){
- *     // This is the same as default naming scheme `camelCase`
- *     return templateFile.replace(templatesFilesPattern,'').replace(/([ -]\w)/ig,function(v){ return v[1].toUpperCase() });
- *   }
- * }
+ * @config {string} templateNamingScheme - one of `camelCase` or `dashed`
+ * @config {function} templateNamingScheme - Function for custom naming of templates in bundle
+ * @example templateNamingScheme: function(templateFileName, templatesFilesPattern){ return templateName; }
+ *
+ * @config {boolean} bundleOnRun - indicates whenever templates should be bundled on run (default `true`)
  */
+var senchaTouchTemplatesBundler = function(options){
+  this.settings = this.bundleSettings(options || {});
+
+  // Initial bundling
+  if (this.settings.bundleOnRun){
+    this.directoryWatchHandle();
+  }
+
+  // Bundling on templates change
+  fs.watch(this.settings.templatesPath, this.directoryWatchHandle.bind(this));
+}
 
 var camelCaseNamingScheme = function(templateFile, templatesFilesPattern){
   return templateFile.replace(templatesFilesPattern,'').replace(/([\s-]+\w)/ig,function(v){
@@ -33,24 +44,12 @@ var dashedNamingScheme = function(templateFile, templatesFilesPattern){
   return templateFile.replace(templatesFilesPattern,'').replace(/([\s]+\w)/ig, '-');
 }
 
-exports.watch = function(options){
-  var bundleBuilder = new senchaTouchTemplatesBundler(options);
-
-  // Initial bundling
-  bundleBuilder.directoryWatchHandle();
-  // Bundling on templates change
-  fs.watch(bundleBuilder.settings.templatesPath, bundleBuilder.directoryWatchHandle.bind(bundleBuilder));
-}
-
-var senchaTouchTemplatesBundler = function(options){
-  this.settings = this.bundleSettings(options || {});
-}
-
 senchaTouchTemplatesBundler.prototype.bundleSettings = function(options){
   var settings = {
     templatesPath: options.templatesPath || process.cwd() + '/templates',
     templatesFilesPattern: options.templatesFilesPattern || /\.html$/,
-    bundle: {}
+    bundle: {},
+    bundleOnRun: typeof options.bundleOnRun == 'boolean' ? options.bundleOnRun : true
   }
 
   options.templatesNamingScheme = options.templatesNamingScheme || 'camelCase';
@@ -91,17 +90,17 @@ senchaTouchTemplatesBundler.prototype.templatesBundler = function(templates){
   var templatesBundleTemplate = '\
 /**\n\
  * THIS IS GENERATED FILE, DO NOT EDIT!!! \n\
- * Instead edit template files directly.\n\
+ * Instead edit templates files directly.\n\
  */\n\
 Ext.define("'+this.settings.bundle.className+'", {statics:'
     +JSON.stringify(templates, null, 2)+
     '});';
   fs.writeFileSync(this.settings.bundle.fileName, templatesBundleTemplate);
-  console.log('Updated templates bundle', new Date().toISOString());
+  console.log('[',new Date().toISOString(),']','Updated templates bundle', this.settings.bundle.fileName );
   this.updateTimer = 0;
 }
 
-senchaTouchTemplatesBundler.prototype.directoryListener = function(){
+senchaTouchTemplatesBundler.prototype.directoryListener = function(event, filename){
   var files = fs.readdirSync(this.settings.templatesPath);
   var templatesNamesList = files.filter(this.settings.templatesFilesPattern.test, this.settings.templatesFilesPattern);
   var templatesList = templatesNamesList.map(this.templateReader.bind(this));

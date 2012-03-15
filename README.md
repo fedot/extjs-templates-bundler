@@ -14,8 +14,8 @@ Install
 
     npm install git://github.com/fedot/sencha-touch-templates-bundler.git
 
-Usage
------
+Bundler Usage
+-------------
 
 Use `sencha-touch-templates-bundler` in your Node.js application/script (bundler.js for example):
 
@@ -36,6 +36,9 @@ bundler.watch(bundlerOptions);
 Run it:
 
     $ node bundler.js
+
+Templates Usage
+---------------
 
 In your app.js, add `MyApp.Templates` to requirements:
 
@@ -74,31 +77,54 @@ var list = Ext.create('Ext.List', {
 Options
 -------
 
+### *string* **`bundle`** (required)
+##### Description
+Name of the class for templates bundle, bundle file will be named according to Sencha Class Naming convention
+
+### *object* **`bundle`** (required)
+##### Description
+Specify name of class and filename manually if default naming isn't works for you
+
 ```javascript
-{
-  // Name of the class for templates bundle
-  // If the bundle is string, templates bundle file will be named according to Sencha Naming convention
-  'bundle': 'MyApp.Templates',
-
-  // You may also specify name of class and filename manually if default naming isn't works for you
-  'bundle': {className: 'MyApp.Templates', 'fileName', __dirname + '/MyApp/Templates.js'},
-
-  // Regex for matching templates files names (`/\.html$/` - default)
-  'templatesFilesPattern': /\.html$/,
-
-  // Path where the templates files are located,
-  // files matched `templatesFilesPattern` will be considered templates to be bundled
-  'templatesPath': __dirname+'/templates',
-
-  // naming scheme for templates, may be one of:
-  //   "camelCase" (default)
-  //   "dashed"
-  //   function(templateFileName, templatesFilesPattern){ return templateName; }
-  'templateNamingScheme': function(templateFileName, templatesFilesPattern){
-  // This is the same as default naming scheme `camelCase`
-   return templateFile.replace(templatesFilesPattern,'')
-          .replace(/([ -]\w)/ig, function(v){
-              return v[1].toUpperCase()
-          });
- }
+    bundle: {
+      className: 'MyApp.Templates',
+      fileName, 'MyApp/Templates.js'
+    }
 ```
+
+### *regex* **`templatesFilesPattern`** */\.html$/* (optional)
+##### Description
+Regex for matching templates files names
+
+```javascript
+   templatesFilesPattern: /\.html$/
+```
+
+### *string* **`templatesPath`** *./templates* (optional)
+##### Description
+Path where the templates files are located
+
+### *string* **`templateNamingScheme`** *camelCase* (optional)
+##### Description
+Naming scheme for templates, may be one of:
+
+ - `camelCase`
+ - `dashed`
+
+### *function* **`templateNamingScheme`** (optional)
+##### Description
+Function for custom naming of templates in bundle
+
+```javascript
+templateNamingScheme: function(templateFileName, templatesFilesPattern){
+  // This is the same as default naming scheme `camelCase`
+  return templateFile.replace(templatesFilesPattern,'')
+         .replace(/([ -]\w)/ig, function(v){
+           return v[1].toUpperCase()
+         });
+}
+```
+
+### *boolean* **`bundleOnRun`** *true* (optional)
+##### Description
+This indicates whenever templates should be bundled on run, which may be usefull if changes to templates was done prior to bundling
