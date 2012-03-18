@@ -1,8 +1,0 @@
-{
-    "name": "template-bundler-sample"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-    "sencha-touch-templates-bundler": "git://github.com/fedot/sencha-touch-templates-bundler.git"
-  }
-}
