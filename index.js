@@ -68,6 +68,12 @@ TemplatesBundler.prototype.bundleSettings = function(options){
     }
   }
 
+  if (options.customTemplate){
+    this.bundlerTemplate = options.customTemplate;
+  }
+
+  options.pretty = (options.pretty === false)?false:true
+
   if (options.bundle) {
     settings.bundle.className = typeof options.bundle == 'object' ? options.bundle.className : options.bundle;
     settings.bundle.fileName = typeof options.bundle == 'object' ? options.bundle.fileName : settings.bundle.className.replace(/\./, '/') + '.js';
@@ -86,15 +92,16 @@ TemplatesBundler.prototype.templateReader = function(templateFile, idx, template
   return tpl;
 }
 
-TemplatesBundler.prototype.templatesBundler = function(templates){
-  var templatesBundleTemplate = '\
+TemplatesBundler.prototype.bundlerTemplate = '\
 /**\n\
  * THIS IS GENERATED FILE, DO NOT EDIT!!! \n\
  * Instead edit templates files directly.\n\
  */\n\
-Ext.define("'+this.settings.bundle.className+'", {statics:'
-    +JSON.stringify(templates, null, 2)+
-    '});';
+Ext.define("{scope}", {statics:{data}});';
+
+TemplatesBundler.prototype.templatesBundler = function(templates){
+  var data = this.pretty?JSON.stringify(templates, null, 2):JSON.stringify(templates)
+  var templatesBundleTemplate = this.bundlerTemplate.replace('{scope}',this.settings.bundle.className).replace('{data}', data)
   fs.writeFileSync(this.settings.bundle.fileName, templatesBundleTemplate);
   console.log('[',new Date().toISOString(),']','Updated templates bundle', this.settings.bundle.fileName );
   this.updateTimer = 0;
